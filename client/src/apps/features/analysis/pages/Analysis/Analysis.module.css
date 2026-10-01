@@ -1,22 +1,12 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     padding: 30px 0;
     width: 100%;
 }
 
-.advertisement {
-    padding: 0 30px;
-}
-
 @media (max-width: 500px) {
     .wrapper {
-        gap: 0;
-        padding: 0;
-    }
-
-    .advertisement {
         padding: 0;
     }
 }

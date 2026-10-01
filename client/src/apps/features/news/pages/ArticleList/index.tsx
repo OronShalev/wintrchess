@@ -3,14 +3,12 @@ import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { clamp } from "lodash-es";
 
-import ads from "@/constants/advertisements";
 import { useNewsArticles } from "@/hooks/api/useNewsArticles";
 import Loader from "@/components/common/Loader";
 import Separator from "@/components/common/Separator";
 import Button from "@/components/common/Button";
 import ButtonColour from "@/components/common/Button/Colour";
 import LogMessage from "@/components/common/LogMessage";
-import Advertisement from "@/components/Advertisement";
 import BlurredNoiseBackground from "@/components/common/BlurredNoiseBackground";
 import SocialLink from "@/apps/features/news/components/SocialLink";
 import ArticleListing from "@/apps/features/news/components/ArticleListing";
@@ -114,10 +112,6 @@ function News() {
         </div>
 
         <Separator/>
-
-        <Advertisement adUnitId={ads.news.list} style={{
-            width: "100%", height: "100px"
-        }}/>
 
         <div className={styles.articles}>
             {articlesStatus == "pending"

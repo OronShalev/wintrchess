@@ -3,16 +3,12 @@ import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
 import { getGlobalPool } from "@/lib/engine/EnginePool";
-import analysisAuthenticator from "@/lib/security/analysis";
 
 const path = "/analysis/engine/evaluate";
 
 const router = Router();
 
-router.use(path,
-    analysisAuthenticator,
-    express.json()
-);
+router.use(path, express.json());
 
 const evaluateRequestSchema = z.object({
     fen: z.string(),

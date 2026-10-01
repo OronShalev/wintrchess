@@ -1,7 +1,6 @@
 import React from "react";
 
 import Separator from "@/components/common/Separator";
-import { manageDataConsent } from "@/lib/consent";
 
 import * as styles from "../../index.module.css";
 
@@ -88,12 +87,8 @@ function PrivacyPolicy() {
             </h3>
 
             <span>
-                3.1 We use cookies to store a session token string. This keeps you from
-                needing to solve a CAPTCHA to access Chess game analysis and move
-                classifications, but doesn't contain any personally identifying information.
-                It is highly recommended to keep cookies on; you may otherwise lose
-                functionality. The CAPTCHA is proof-of-work based; it in itself does not
-                collect any personal data.
+                3.1 Game analysis and move classifications are available without an account,
+                session token, or CAPTCHA.
             </span>
 
             <span>
@@ -149,89 +144,19 @@ function PrivacyPolicy() {
             </span>
 
             <h3 style={{ margin: 0 }}>
-                4. Game Archive
+                4. Accounts and saved games
             </h3>
 
             <span>
-                4.1 If you have an account on the Website, you can save Chess games that you
-                analyse to the{" "}
-
-                <a href="/archive">Game Archive</a>
-
-                . If you do this, we collect information about the Chess game as well as
-                any information about the analysis you have conducted, in order to provide
-                the archive service. This includes:
-
-                <ul>
-                    <li>
-                        The PGN (Portable Game Notation) file that represents the game,
-                        including any metadata therein as defined by{" "}
-
-                        <b>Section 3.2</b>
-                    </li>
-
-                    <li>Evaluations and moves provided by a Chess engine</li>
-                    <li>Move classifications that we have provided during analysis</li>
-                </ul>
-
-                This information is retained until you delete the game from your archive,
-                or delete your account.
-            </span>
-
-            <h3 style={{ margin: 0 }}>
-                5. Accounts
-            </h3>
-
-            <span>
-                You, while on the Website, have the option to make an account. You do not have
-                to do this, although some services we provide cannot be used without one.
-            </span>
-
-            <span>
-                When you sign up for an account, we collect the information that you explicitly
-                provide to us in order to provide the Website and its services. This includes:
-
-                <ul>
-                    <li>Your Email Address</li>
-                    <li>The username you provide</li>
-                    <li>Your display name, if you sign in with Google</li>
-                    <li>Your profile picture, if you sign in with Google</li>
-                    <li>Your password in hashed form, if you sign up with credentials</li>
-                </ul>
-
-                This information is retained for the duration that you keep your account open on
-                the Website.
+                WintrChess does not offer user accounts or a saved game archive.
             </span>
 
             <h2 style={{ margin: 0 }}>
-                6. Data we provide to third parties
+                5. Data we provide to third parties
             </h2>
 
             <span>
-                6.1 We use Google AdSense on the Website to serve advertisements. Google LLC,
-                as a third-party vendor, uses cookies to serve personalised advertising.
-                You are prompted to provide explicit consent to this information being
-                collected when you first visit the Website, or when you click
-
-                <a className={styles.link} onClick={manageDataConsent}>
-                    Privacy Settings
-                </a>
-
-                {" "}which is always located in the footer of the page.
-
-                Through the same prompt, you also have the right to withdraw your consent to
-                this collection at any time. You may also read the{" "}
-
-                <a href="https://policies.google.com/privacy">
-                    Google LLC Privacy Policy
-                </a>
-
-                , should you want to read more about what information is collected in regard to
-                serving advertisements on the Website.
-            </span>
-
-            <span>
-                6.2 We use Google Analytics to collect information about how visitors
+                5.1 We use Google Analytics to collect information about how visitors
                 use the Website, including pages visited, time spent, and interactions. 
                 This includes IP addresses, browser and device information, and 
                 approximate location. Cookies are also used for this and for purposes
@@ -252,7 +177,7 @@ function PrivacyPolicy() {
             </span>
 
             <h2 style={{ margin: 0 }}>
-                7. Children's Privacy
+                6. Children's Privacy
             </h2>
 
             <span>
@@ -261,7 +186,7 @@ function PrivacyPolicy() {
             </span>
 
             <h2 style={{ margin: 0 }}>
-                8. Your Data Rights
+                7. Your Data Rights
             </h2>
 
             <span>
@@ -275,9 +200,7 @@ function PrivacyPolicy() {
 
                 <li>
                     Request for the personal information we hold about you to be erased.
-                    You can do this by deleting your account through the{" "}
-
-                    <a href="/settings/account">settings page.</a>
+                    You can do this by contacting us using the address below.
                 </li>
 
                 <li>
@@ -287,7 +210,7 @@ function PrivacyPolicy() {
             </ul>
 
             <h2 style={{ margin: 0 }}>
-                9. Revisions
+                8. Revisions
             </h2>
 
             <span>
@@ -299,7 +222,7 @@ function PrivacyPolicy() {
             </span>
 
             <h2 style={{ margin: 0 }}>
-                10. Contact Us
+                9. Contact Us
             </h2>
 
             <span>

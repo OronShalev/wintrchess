@@ -39,9 +39,7 @@ function useEvaluateGame() {
         });
 
         evaluator.evaluate()
-            .then(() => setAnalysisStatus(
-                AnalysisStatus.AWAITING_CAPTCHA
-            ))
+            .then(() => setAnalysisStatus(AnalysisStatus.ANALYSING))
             .catch(err => {
                 if (err == "abort" || (err as Error).name == "AbortError") return;
 

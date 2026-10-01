@@ -1,6 +1,5 @@
 import express, { Router } from "express";
 import { StatusCodes } from "http-status-codes";
-
 import {
     SerializedStateTreeNode,
     serializeNode,
@@ -9,17 +8,13 @@ import {
     getNodeChain
 } from "shared/types/game/position/StateTreeNode";
 import { getGameAnalysis } from "shared/lib/reporter/report";
-import analysisAuthenticator from "@/lib/security/analysis";
 import evaluateGameOnServer from "@/lib/engine/evaluateGame";
 
 const path = "/analysis/analyse";
 
 const router = Router();
 
-router.use(path,
-    analysisAuthenticator,
-    express.json({ limit: "5mb" })
-);
+router.use(path, express.json({ limit: "5mb" }));
 
 router.post(path, async (req, res) => {
     let serializedStateTree: SerializedStateTreeNode;

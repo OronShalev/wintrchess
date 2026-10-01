@@ -215,8 +215,7 @@ function Terms() {
             </span>
 
             <span>
-                For most users, this relates to advertisements on the Website or sign-in features
-                provided by Google.
+                For most users, this relates to linked third-party services.
             </span>
 
             <h2 style={{ margin: 0 }}>

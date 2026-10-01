@@ -1,7 +1,7 @@
 enum AnalysisStatus {
     INACTIVE = "inactive",
     EVALUATING = "evaluating",
-    AWAITING_CAPTCHA = "awaiting_captcha"
+    ANALYSING = "analysing"
 }
 
 export default AnalysisStatus;

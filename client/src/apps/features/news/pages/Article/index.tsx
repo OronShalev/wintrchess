@@ -6,10 +6,8 @@ import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 
 import { formatDate } from "shared/lib/utils/date";
 import { useNewsArticle } from "@/hooks/api/useNewsArticles";
-import ads from "@/constants/advertisements";
 import Loader from "@/components/common/Loader";
 import LogMessage from "@/components/common/LogMessage";
-import Advertisement from "@/components/Advertisement";
 
 import * as styles from "./Article.module.css";
 
@@ -27,10 +25,6 @@ function Article() {
     }, [status]);
 
     return <div className={styles.wrapper}>
-        <Advertisement adUnitId={ads.news.article.top} style={{
-            width: "min(800px, 100%)", height: "100px"
-        }}/>
-
         <div className={styles.articleContainer}>
             {status == "pending"
                 && <div className={styles.articleLoaderContainer}>
@@ -75,9 +69,6 @@ function Article() {
             {t("news.article.error")}
         </LogMessage>}
 
-        <Advertisement adUnitId={ads.news.article.bottom} style={{
-            width: "min(800px, 100%)", height: "100px"
-        }}/>
     </div>;
 }
 

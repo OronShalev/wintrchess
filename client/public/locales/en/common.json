@@ -28,7 +28,6 @@
         "news": "News"
     },
     "footer": {
-        "privacySettings": "Privacy Settings",
         "language": "Language",
         "languagesDialog": {
             "select": "Select a language",

@@ -10,18 +10,20 @@ function useAnnouncement() {
         queryKey: ["announcement"],
         queryFn: async () => {
             const announcementResponse = await fetch("/api/public/announcement");
-            return await announcementResponse.json();
+            if (announcementResponse.status == 204) return null;
+            if (!announcementResponse.ok) throw new Error();
+            return await announcementResponse.json() as Announcement;
         },
         retry: false,
         refetchOnWindowFocus: false
     }, queryClient);
 
-    if (status != "success") return { status, refetch };
+    if (status != "success" || !announcement) return { status, refetch };
 
     return {
         status,
         refetch,
-        announcement: announcement as Announcement
+        announcement
     };
 }
 

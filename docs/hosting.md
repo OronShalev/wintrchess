@@ -41,7 +41,7 @@ ORIGIN="http://localhost:8080"
 ```
 > Required
 
-The origin - URLs in emails are constructed using this, and the authentication uses it as a base URL.
+The origin - used to construct email URLs and to allow the configured hostname in production.
 For example, `http://localhost:8080` or `https://wintrchess.com`.
 
 ```toml
@@ -51,44 +51,6 @@ DATABASE_URI="mongodb://" # ...
 A connection string for a MongoDB database. Collections, indexes etc. will be created when the app runs. Defaults to `mongodb://database/wintrchess`.
 
 ```toml
-ANALYSIS_SESSION_ACTIONS=80
-```
-
-The number of actions that a user can take during an analysis session, before they have to solve a CAPTCHA again. Each request to the server using the analysis session to authorize oneself uses an action; this may be analysing a game or a single move added to the board. Defaults to `80`.
-
-```toml
-MAXIMUM_ARCHIVE_SIZE=50
-```
-
-The maximum number of games that the server will allow users to keep in their game archive. Defaults to `50`.
-
-```toml
-INTERNAL_PASSWORD="squidward"
-```
-
-The password for the internal dashboard, where administrators can change the announcement banner and author news posts.
-
-```toml
-AUTH_SECRET="12345678901234567890"
-```
-> Required
-
-A random string used for authentication i.e hashing passwords, signing JWTs etc. Make sure it has a good amount of entropy.
-
-```toml
-GOOGLE_OAUTH_CLIENT_ID="12345678901234567890"
-GOOGLE_OAUTH_CLIENT_SECRET="12345678901234567890"
-```
-
-Your Google OAuth client ID and secret, if you would like to enable Google sign-in.
-
-```toml
-ADS_PUBLISHER_ID="ca-pub-3914142339921252"
-```
-
-Your Google AdSense publisher ID, if you would like to enable advertisements. Note that advertisements will not display on local deployments.
-
-```toml
 ANALYTICS_MEASUREMENT_ID="G-EX024ZXSNX"
 ```
 
@@ -96,11 +58,9 @@ A Google Analytics Measurement ID, if you would like to enable analytics.
 
 ```toml
 EMAIL_ACCOUNT="contact@wintrchess.com"
-AUTOMATED_EMAIL_ADDRESS="no-reply@wintrchess.com"
-AUTOMATED_EMAIL_KEY="aaaa bbbb cccc dddd"
 ```
 
-The email address that should be listed as the contact for the website. The automated email address is the address that sends automated correspondence like email verification and password resets. To login to the account, use the automated email key, which is the password to the account / Google Workspace app password.
+The contact address shown on the website.
 
 ## Deploy manually
 

@@ -2,7 +2,7 @@
 
 The manifest targets the existing `chess` namespace, HTTPS Route, and 200 GiB claim `wintrchess-mongodb`. It deploys one WintrChess pod and one MongoDB pod; the database claim is retained across restarts and is not recreated by this manifest. MongoDB uses the amd64 image copied to `docker.io/oronsh100/mongo:8.0`, matching the cluster node architecture.
 
-Analysis CAPTCHA/session enforcement is disabled with `DISABLE_ANALYSIS_AUTH=true` to allow unauthenticated engine requests. This makes the CPU-intensive analysis endpoints public; apply ingress rate limits or re-enable auth before exposing the service broadly.
+The app has no sign-in, admin authentication, or CAPTCHA/session enforcement. Its CPU-intensive analysis endpoints are public; apply ingress rate limits before exposing the service broadly.
 
 ## Create the Docker Hub pull secret
 
@@ -32,22 +32,6 @@ finally {
 }
 ```
 
-## Create the auth secret
-
-The app requires `AUTH_SECRET`. Generate a random value in PowerShell without displaying it, then create the Kubernetes Secret:
-
-```powershell
-$bytes = [byte[]]::new(32)
-$rng = [Security.Cryptography.RandomNumberGenerator]::Create()
-$rng.GetBytes($bytes)
-$rng.Dispose()
-$authSecret = [Convert]::ToBase64String($bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_')
-& oc create secret generic wintrchess-auth --from-literal="AUTH_SECRET=$authSecret" -n chess
-Remove-Variable authSecret, bytes, rng
-```
-
-If `wintrchess-auth` already exists, do not replace it blindly; have a namespace administrator confirm its contents and required key.
-
 ## Apply
 
 From the repository root, with a role that can manage Deployments, Services, Routes, NetworkPolicies, and ConfigMaps in `chess`:
@@ -66,4 +50,5 @@ The WintrChess container requests 200 CPU cores and 512 GiB of memory, with limi
 
 MongoDB is unauthenticated to match the project's Compose setup. The included NetworkPolicy limits database ingress to WintrChess pods in this namespace. Do not expose the MongoDB Service through a Route or LoadBalancer.
 
-Email verification and Google sign-in require their corresponding SMTP/OAuth environment variables; they are not configured by this base manifest.
+This deployment leaves existing database records untouched.
+

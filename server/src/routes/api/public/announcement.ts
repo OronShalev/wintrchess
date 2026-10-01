@@ -7,7 +7,7 @@ const router = Router();
 
 router.get("/announcement", async (req, res) => {
     const announcement = await Announcement.findOne();
-    if (!announcement) return res.sendStatus(StatusCodes.NOT_FOUND);
+    if (!announcement) return res.sendStatus(StatusCodes.NO_CONTENT);
 
     res.json(announcement);
 });

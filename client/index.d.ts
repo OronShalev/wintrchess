@@ -6,10 +6,5 @@ declare module "*.gif";
 declare module "*.mp3";
 
 declare interface Window {
-    adsbygoogle: any[];
-    googlefc: {
-        callbackQueue: any[];
-        showRevocationMessage: () => void;
-    };
     dataLayer: IArguments[];
 }

@@ -37,7 +37,7 @@ function PageWrapper({
 
     return <QueryClientProvider client={queryClient}>
         <div className={className} style={style}>
-            {announcementOpen && announcementStatus == "success"
+            {announcementOpen && announcementStatus == "success" && announcement
                 && <Announcement
                     style={{ zIndex: 99 }}
                     setOpen={setAnnouncementOpen}
