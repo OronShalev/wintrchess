@@ -1,0 +1,219 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wintrchess-config
+  namespace: chess
+data:
+  NODE_ENV: production
+  PORT: "8080"
+  DISABLE_ANALYSIS_AUTH: "true"
+  ORIGIN: https://wintrchess-chess.apps.rnd.gpu.central.cks.med.one
+  DATABASE_URI: mongodb://wintrchess-mongodb:27017/wintrchess
+  WORKER_COUNT: "1"
+  ENGINE_POOL_SIZE: "100"
+  ENGINE_THREADS: "2"
+  ENGINE_HASH: "512"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wintrchess-mongodb
+  namespace: chess
+  labels:
+    app.kubernetes.io/name: wintrchess-mongodb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wintrchess-mongodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wintrchess-mongodb
+    spec:
+      terminationGracePeriodSeconds: 60
+      imagePullSecrets:
+        - name: dockerhub-pull
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mongodb
+          image: oronsh100/mongo:8.0
+          args: ["mongod", "--bind_ip_all"]
+          ports:
+            - name: mongodb
+              containerPort: 27017
+              protocol: TCP
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          startupProbe:
+            exec:
+              command: ["mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            exec:
+              command: ["mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: wintrchess-mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wintrchess-mongodb
+  namespace: chess
+spec:
+  selector:
+    app.kubernetes.io/name: wintrchess-mongodb
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: mongodb
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wintrchess
+  namespace: chess
+  labels:
+    app.kubernetes.io/name: wintrchess
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wintrchess
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wintrchess
+    spec:
+      terminationGracePeriodSeconds: 60
+      imagePullSecrets:
+        - name: dockerhub-pull
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: wintrchess
+          image: oronsh100/wintrchess:stockfish19
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: wintrchess-config
+          env:
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: wintrchess-auth
+                  key: AUTH_SECRET
+          resources:
+            requests:
+              cpu: "220"
+              memory: 512Gi
+            limits:
+              cpu: "240"
+              memory: 640Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wintrchess
+  namespace: chess
+spec:
+  selector:
+    app.kubernetes.io/name: wintrchess
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: wintrchess
+  namespace: chess
+spec:
+  host: wintrchess-chess.apps.rnd.gpu.central.cks.med.one
+  to:
+    kind: Service
+    name: wintrchess
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: wintrchess-mongodb-ingress
+  namespace: chess
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: wintrchess-mongodb
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: wintrchess
+      ports:
+        - protocol: TCP
+          port: 27017

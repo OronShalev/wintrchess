@@ -5,6 +5,10 @@ import Cookie from "shared/constants/Cookie";
 import AnalysisSession from "@/database/models/AnalysisSession";
 
 const analysisAuthenticator: RequestHandler = async (req, res, next) => {
+    if (process.env.DISABLE_ANALYSIS_AUTH === "true" || process.env.NODE_ENV === "development") {
+        return next();
+    }
+
     // Ensure existence of session token in cookies
     const sessionToken = req.cookies[Cookie.ANALYSIS_SESSION_TOKEN];
 

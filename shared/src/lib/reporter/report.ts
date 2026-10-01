@@ -15,7 +15,7 @@ export function getGameAnalysis(
     options?: AnalysisOptions
 ): GameAnalysis {
     const treeNodes = getNodeChain(rootNode);
-    
+
     for (const node of treeNodes) {
         try {
             node.state.classification = classify(node, options);

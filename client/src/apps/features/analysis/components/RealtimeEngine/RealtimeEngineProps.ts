@@ -12,7 +12,6 @@ interface RealtimeEngineProps {
         version: EngineVersion;
         depth: number;
         lines?: number;
-        threads?: number;
         timeLimit?: number;
     };
     cachedEngineLines?: EngineLine[];

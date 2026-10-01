@@ -60,7 +60,7 @@ function RealtimeEngine({
     useEffect(() => {
         engine?.terminate();
 
-        const newEngine = new Engine(hydratedConfig.version);
+        const newEngine = new Engine();
         setEngine(newEngine);
 
         return () => newEngine.terminate();

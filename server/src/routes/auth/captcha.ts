@@ -5,6 +5,10 @@ import { createChallenge } from "altcha-lib";
 const router = Router();
 
 router.get("/captcha", async (req, res) => {
+    if (process.env.DISABLE_ANALYSIS_AUTH === "true") {
+        return res.json({ disabled: true });
+    }
+
     if (!process.env.AUTH_SECRET) {
         return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
     }

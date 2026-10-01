@@ -15,16 +15,8 @@ import * as styles from "../SettingsDialog.module.css";
 
 const engineVersionOptions = [
     {
-        label: "Stockfish 17 (68 MB)",
-        value: EngineVersion.STOCKFISH_17
-    },
-    {
-        label: "Stockfish 17 Lite (Recommended)",
-        value: EngineVersion.STOCKFISH_17_LITE
-    },
-    {
-        label: "Stockfish 17 (Compatibility)",
-        value: EngineVersion.STOCKFISH_17_ASM
+        label: "Stockfish 19 (Server)",
+        value: EngineVersion.STOCKFISH_19
     }
 ];
 

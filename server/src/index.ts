@@ -15,7 +15,10 @@ dotenv.config();
 const port = process.env.PORT || 8080;
 const nodeEnv = process.env.NODE_ENV || "production";
 
-const coreCount = os.cpus().length;
+const coreCount = Math.min(
+    os.cpus().length,
+    parseInt(process.env.WORKER_COUNT || "4")
+);
 
 async function main() {
     if (cluster.isPrimary) {

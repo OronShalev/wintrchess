@@ -20,7 +20,28 @@ export function useAltcha() {
                 t("progressReporter.captchaUnknownError")
             );
 
-        const challengeData: Challenge = await challengeResponse.json();
+        const challengeData = await challengeResponse.json();
+
+        // If analysis auth is disabled on the server, skip CAPTCHA solving
+        // and directly request a session token
+        if (challengeData.disabled) {
+            const sessionResponse = await fetch("/auth/analysis-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({})
+            });
+
+            if (!sessionResponse.ok)
+                return setAnalysisCaptchaError(
+                    t("progressReporter.captchaVerifyFailed")
+                );
+
+            const sessionToken = await sessionResponse.text();
+
+            setAnalysisSessionToken(sessionToken);
+            setAnalysisCaptchaError();
+            return;
+        }
 
         const solution = await solveChallenge(
             challengeData.challenge,

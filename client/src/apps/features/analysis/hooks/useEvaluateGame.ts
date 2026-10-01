@@ -28,13 +28,10 @@ function useEvaluateGame() {
         setAnalysisStatus(AnalysisStatus.EVALUATING);
 
         const evaluator = createGameEvaluator(analysisGame, {
-            engineVersion: settings.version,
             engineDepth: settings.depth,
             engineTimeLimit: settings.timeLimitEnabled
                 ? settings.timeLimit : undefined,
-            cloudEngineLines: settings.lines,
-            maxEngineCount: 4,
-            engineConfig: engine => engine.setLineCount(settings.lines),
+            lines: settings.lines,
             onProgress: progress => {
                 setEvaluationProgress(progress);
                 dispatchCurrentNodeUpdate();
@@ -46,7 +43,7 @@ function useEvaluateGame() {
                 AnalysisStatus.AWAITING_CAPTCHA
             ))
             .catch(err => {
-                if (err == "abort") return;
+                if (err == "abort" || (err as Error).name == "AbortError") return;
 
                 console.error(err);
                 setAnalysisError(t("analysisError"));

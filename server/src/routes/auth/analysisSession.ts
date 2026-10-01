@@ -26,22 +26,26 @@ const payloadSchema = z.object({
 router.use(path, express.json());
 
 router.post(path, async (req, res) => {
-    const payload: Payload = req.body;
+    const authDisabled = process.env.DISABLE_ANALYSIS_AUTH === "true";
 
-    if (!payloadSchema.safeParse(payload).success) {
-        return res.sendStatus(StatusCodes.BAD_REQUEST);
-    }
+    if (!authDisabled) {
+        const payload: Payload = req.body;
 
-    if (!process.env.AUTH_SECRET) {
-        return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
-    }
+        if (!payloadSchema.safeParse(payload).success) {
+            return res.sendStatus(StatusCodes.BAD_REQUEST);
+        }
 
-    const captchaSolutionValid = await verifySolution(
-        payload, process.env.AUTH_SECRET
-    );
+        if (!process.env.AUTH_SECRET) {
+            return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+        }
 
-    if (!captchaSolutionValid) {
-        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+        const captchaSolutionValid = await verifySolution(
+            payload, process.env.AUTH_SECRET
+        );
+
+        if (!captchaSolutionValid) {
+            return res.sendStatus(StatusCodes.UNAUTHORIZED);
+        }
     }
 
     // Do not replace existing valid session

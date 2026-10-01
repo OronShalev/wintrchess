@@ -16,7 +16,6 @@ const settingsSchema = z.object({
             timeLimitEnabled: z.boolean(),
             timeLimit: z.number().min(0.01),
             lines: z.number().min(1).max(5),
-            threads: z.number().min(1).max(64),
             suggestionArrows: z.enum(EngineArrowType)
         }),
         classifications: z.object({
@@ -46,12 +45,11 @@ export const defaultSettings: Settings = {
     analysis: {
         engine: {
             enabled: true,
-            version: EngineVersion.STOCKFISH_17_LITE,
+            version: EngineVersion.STOCKFISH_19,
             depth: 16,
             lines: 2,
             timeLimitEnabled: false,
             timeLimit: 1,
-            threads: 4,
             suggestionArrows: EngineArrowType.DISABLED
         },
         classifications: {
@@ -82,7 +80,11 @@ function fetchSettings() {
     if (value == null) return defaultSettingsCopy;
 
     try {
-        return merge(defaultSettingsCopy, JSON.parse(value));
+        const merged = merge(defaultSettingsCopy, JSON.parse(value));
+        if (!merged.analysis?.engine?.version || merged.analysis.engine.version.startsWith("stockfish-17")) {
+            merged.analysis.engine.version = EngineVersion.STOCKFISH_19;
+        }
+        return merged;
     } catch {
         return defaultSettingsCopy;
     }
