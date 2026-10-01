@@ -53,11 +53,27 @@ router.post(path, async (req, res) => {
         }
     }
 
+    function stopKeepAlive() {
+        if (!keepAlive) return;
+        clearInterval(keepAlive);
+        keepAlive = undefined;
+    }
+
     res.on("close", () => {
         if (!res.writableEnded) markClientDisconnected();
+        stopKeepAlive();
     });
     res.on("error", markClientDisconnected);
     responseSocket?.on("error", markClientDisconnected);
+
+    if (isSse) {
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.flushHeaders?.();
+        keepAlive = setInterval(() => writeSse(": keep-alive\n\n"), 15000);
+        keepAlive.unref();
+    }
 
     const engine = await pool.acquire();
 
@@ -67,13 +83,6 @@ router.post(path, async (req, res) => {
         engine.setPosition(fen, moves);
 
         if (isSse) {
-            res.setHeader("Content-Type", "text/event-stream");
-            res.setHeader("Cache-Control", "no-cache");
-            res.setHeader("Connection", "keep-alive");
-            res.flushHeaders?.();
-            keepAlive = setInterval(() => writeSse(": keep-alive\n\n"), 15000);
-            keepAlive.unref();
-
             const finalLines = await engine.evaluate({
                 depth,
                 lines,
@@ -107,7 +116,7 @@ router.post(path, async (req, res) => {
             }
         }
     } finally {
-        if (keepAlive) clearInterval(keepAlive);
+        stopKeepAlive();
         res.removeListener("error", markClientDisconnected);
         responseSocket?.removeListener("error", markClientDisconnected);
         // Return engine to pool instead of destroying it

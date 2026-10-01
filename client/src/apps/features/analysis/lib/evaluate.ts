@@ -42,7 +42,9 @@ function createGameEvaluator(
             throw new Error(`Server analysis failed: ${response.statusText}`);
         }
 
-        if (!response.body) return stateTreeNodes;
+        if (!response.body) {
+            throw new Error("Server analysis response has no body");
+        }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -90,7 +92,7 @@ function createGameEvaluator(
             throw error;
         }
 
-        return stateTreeNodes;
+        throw new Error("Server analysis ended before completion");
     }
 
     return { evaluate: evaluator, controller };

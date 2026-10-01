@@ -72,7 +72,7 @@ router.post(path, async (req, res) => {
         if (needsEvaluation) {
             gameAnalysis = await evaluateGameOnServer(stateTree, {
                 initialPosition,
-                depth: Math.max(depth || (req.query.depth ? parseInt(req.query.depth as string) : 24), 24),
+                depth: Math.max(depth || (req.query.depth ? parseInt(req.query.depth as string) : 24), 16),
                 lines: lines || (req.query.lines ? parseInt(req.query.lines as string) : 2),
                 timeLimit,
                 analysisOptions,
