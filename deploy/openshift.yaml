@@ -122,7 +122,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: wintrchess
-          image: oronsh100/wintrchess:stockfish19-no-auth-no-ads-20261001
+          image: oronsh100/wintrchess:stockfish19-prewarmed-20261001
           imagePullPolicy: Always
           ports:
             - name: http

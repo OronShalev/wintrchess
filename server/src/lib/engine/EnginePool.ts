@@ -140,16 +140,31 @@ export function computePoolConfig(): { poolSize: number; threadsPerEngine: numbe
 
 // Singleton pool instance for the worker process
 let globalPool: EnginePool | null = null;
+let globalPoolPromise: Promise<EnginePool> | null = null;
 
 export async function getGlobalPool(): Promise<EnginePool> {
     if (globalPool && globalPool.isInitialized) {
         return globalPool;
     }
 
-    const config = computePoolConfig();
-    globalPool = new EnginePool(config.poolSize, config.threadsPerEngine, config.hashSizePerEngine);
-    await globalPool.init();
-    return globalPool;
+    if (!globalPoolPromise) {
+        const config = computePoolConfig();
+        const pool = new EnginePool(
+            config.poolSize,
+            config.threadsPerEngine,
+            config.hashSizePerEngine
+        );
+        globalPool = pool;
+        globalPoolPromise = pool.init()
+            .then(() => pool)
+            .catch(error => {
+                if (globalPool === pool) globalPool = null;
+                globalPoolPromise = null;
+                throw error;
+            });
+    }
+
+    return globalPoolPromise;
 }
 
 export default EnginePool;

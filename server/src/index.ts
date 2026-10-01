@@ -4,6 +4,7 @@ import os from "os";
 import dotenv from "dotenv";
 
 import connectDatabase from "@/database/connect";
+import { getGlobalPool } from "@/lib/engine/EnginePool";
 import hostnameWhitelist from "@/lib/security/whitelist";
 import mainRouter from "./routes";
 
@@ -26,6 +27,7 @@ async function main() {
     }
 
     await connectDatabase();
+    await getGlobalPool();
 
     const app = express();
 
