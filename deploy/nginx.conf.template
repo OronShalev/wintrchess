@@ -1,0 +1,39 @@
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    location = /backend-config.js {
+        default_type application/javascript;
+        add_header Cache-Control "no-store";
+        return 200 'window.BACKEND_URL = "${BACKEND_URL}";';
+    }
+
+    location = / {
+        return 302 /analysis;
+    }
+
+    location = /analysis {
+        rewrite ^ /apps/features/analysis.html last;
+    }
+
+    location ~ ^/news {
+        rewrite ^ /apps/features/news.html last;
+    }
+
+    location = /help {
+        rewrite ^ /apps/footer/helpCenter.html last;
+    }
+
+    location ~ ^/(terms|privacy) {
+        rewrite ^ /apps/footer/legal.html last;
+    }
+
+    location ~ ^/settings {
+        rewrite ^ /apps/settings.html last;
+    }
+
+    location / {
+        try_files $uri $uri/ /apps/unfound.html;
+    }
+}

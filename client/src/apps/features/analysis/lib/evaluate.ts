@@ -1,5 +1,6 @@
 import AnalysedGame from "shared/types/game/AnalysedGame";
 import { StateTreeNode, getNodeChain, serializeNode, deserializeNode } from "shared/types/game/position/StateTreeNode";
+import apiUrl from "@/constants/apiUrl";
 
 interface EvaluateMovesOptions {
     engineDepth: number;
@@ -21,7 +22,7 @@ function createGameEvaluator(
     const stateTreeNodes = getNodeChain(game.stateTree);
 
     async function evaluator(): Promise<StateTreeNode[]> {
-        const response = await fetch("/api/analysis/analyse", {
+        const response = await fetch(apiUrl("/api/analysis/analyse"), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -5,13 +5,21 @@ metadata:
   namespace: chess
 data:
   NODE_ENV: production
-  PORT: "8080"
   ORIGIN: https://wintrchess-chess.apps.rnd.gpu.central.cks.med.one
   DATABASE_URI: mongodb://wintrchess-mongodb:27017/wintrchess
   WORKER_COUNT: "1"
   ENGINE_POOL_SIZE: "100"
   ENGINE_THREADS: "2"
   ENGINE_HASH: "2048"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wintrchess-ui-config
+  namespace: chess
+data:
+  BACKEND_URL: https://wintrchess-chess.apps.rnd.gpu.central.cks.med.one
+  NGINX_ENVSUBST_FILTER: ^BACKEND_URL$
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -98,21 +106,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wintrchess
+  name: wintrchess-backend
   namespace: chess
   labels:
-    app.kubernetes.io/name: wintrchess
+    app.kubernetes.io/name: wintrchess-backend
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app.kubernetes.io/name: wintrchess
+      app.kubernetes.io/name: wintrchess-backend
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: wintrchess
+        app.kubernetes.io/name: wintrchess-backend
     spec:
       terminationGracePeriodSeconds: 60
       imagePullSecrets:
@@ -121,7 +129,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: wintrchess
+        - name: wintrchess-backend
           image: oronsh100/wintrchess:stockfish19-prewarmed-20261001
           imagePullPolicy: Always
           ports:
@@ -163,11 +171,89 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: wintrchess
+  name: wintrchess-backend
   namespace: chess
 spec:
   selector:
-    app.kubernetes.io/name: wintrchess
+    app.kubernetes.io/name: wintrchess-backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wintrchess-ui
+  namespace: chess
+  labels:
+    app.kubernetes.io/name: wintrchess-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wintrchess-ui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wintrchess-ui
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-pull
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: wintrchess-ui
+          image: oronsh100/wintrchess:ui-20261001
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: wintrchess-ui-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          startupProbe:
+            httpGet:
+              path: /backend-config.js
+              port: http
+            periodSeconds: 5
+            failureThreshold: 12
+          readinessProbe:
+            httpGet:
+              path: /backend-config.js
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /backend-config.js
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wintrchess-ui
+  namespace: chess
+spec:
+  selector:
+    app.kubernetes.io/name: wintrchess-ui
   ports:
     - name: http
       port: 8080
@@ -183,7 +269,25 @@ spec:
   host: wintrchess-chess.apps.rnd.gpu.central.cks.med.one
   to:
     kind: Service
-    name: wintrchess
+    name: wintrchess-ui
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: wintrchess-backend
+  namespace: chess
+spec:
+  host: wintrchess-chess.apps.rnd.gpu.central.cks.med.one
+  path: /api
+  to:
+    kind: Service
+    name: wintrchess-backend
   port:
     targetPort: http
   tls:
@@ -206,7 +310,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/name: wintrchess
+                app.kubernetes.io/name: wintrchess-backend
       ports:
         - protocol: TCP
           port: 27017

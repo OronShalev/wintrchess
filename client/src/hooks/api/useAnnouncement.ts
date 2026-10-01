@@ -1,3 +1,5 @@
+import apiUrl from "@/constants/apiUrl";
+
 import { useMemo } from "react";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 
@@ -9,7 +11,7 @@ function useAnnouncement() {
     const { data: announcement, status, refetch } = useQuery({
         queryKey: ["announcement"],
         queryFn: async () => {
-            const announcementResponse = await fetch("/api/public/announcement");
+            const announcementResponse = await fetch(apiUrl("/api/public/announcement"));
             if (announcementResponse.status == 204) return null;
             if (!announcementResponse.ok) throw new Error();
             return await announcementResponse.json() as Announcement;

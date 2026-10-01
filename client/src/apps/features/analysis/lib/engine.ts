@@ -1,5 +1,6 @@
 import { EngineLine } from "shared/types/game/position/EngineLine";
 import { STARTING_FEN } from "shared/constants/utils";
+import apiUrl from "@/constants/apiUrl";
 
 class Engine {
     private position = STARTING_FEN;
@@ -34,7 +35,7 @@ class Engine {
         const engineLines: EngineLine[] = [];
 
         try {
-            const response = await fetch("/api/analysis/engine/evaluate", {
+            const response = await fetch(apiUrl("/api/analysis/engine/evaluate"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

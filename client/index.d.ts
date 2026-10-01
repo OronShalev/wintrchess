@@ -7,4 +7,5 @@ declare module "*.mp3";
 
 declare interface Window {
     dataLayer: IArguments[];
+    BACKEND_URL: string;
 }

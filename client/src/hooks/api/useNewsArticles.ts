@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { NewsArticle, NewsArticleMetadata } from "shared/types/NewsArticle";
+import apiUrl from "@/constants/apiUrl";
 
 export function useNewsArticles(page = 1) {
     const {
@@ -9,7 +10,7 @@ export function useNewsArticles(page = 1) {
     } = useQuery({
         queryKey: ["newsArticles", page],
         queryFn: async () => {
-            const response = await fetch(`/api/public/news?page=${page}`);
+            const response = await fetch(apiUrl(`/api/public/news?page=${page}`));
             if (!response.ok) throw new Error();
 
             const articles: NewsArticleMetadata[] = await response.json();
@@ -26,7 +27,7 @@ export function useNewsArticles(page = 1) {
     } = useQuery({
         queryKey: ["newsArticlesPages"],
         queryFn: async () => {
-            const response = await fetch("/api/public/news/pages");
+            const response = await fetch(apiUrl("/api/public/news/pages"));
             if (!response.ok) throw new Error();
             
             const pageCount: number = await response.json();
@@ -54,7 +55,7 @@ export function useNewsArticle(id: string) {
     const { data: article, status, refetch } = useQuery({
         queryKey: ["newsArticle", id],
         queryFn: async () => {
-            const response = await fetch(`/api/public/news?id=${id}`);
+            const response = await fetch(apiUrl(`/api/public/news?id=${id}`));
             if (!response.ok) throw new Error();
 
             const article: NewsArticle = await response.json();

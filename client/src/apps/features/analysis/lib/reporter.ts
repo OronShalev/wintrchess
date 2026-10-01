@@ -12,12 +12,13 @@ import {
     deserializeNode
 } from "shared/types/game/position/StateTreeNode";
 import APIResponse from "@/types/APIResponse";
+import apiUrl from "@/constants/apiUrl";
 
 export async function analyseStateTree(
     rootNode: StateTreeNode,
     options?: AnalysisOptions
 ): APIResponse<{ gameAnalysis: GameAnalysis }> {
-    const reportURL = "/api/analysis/analyse"
+    const reportURL = apiUrl("/api/analysis/analyse")
         + `?brilliant=${String(options?.includeBrilliant)}`
         + `&critical=${String(options?.includeCritical)}`
         + `&theory=${String(options?.includeTheory)}`;
