@@ -8,9 +8,9 @@ data:
   ORIGIN: https://wintrchess-chess.apps.rnd.gpu.central.cks.med.one
   DATABASE_URI: mongodb://wintrchess-mongodb:27017/wintrchess
   WORKER_COUNT: "1"
-  ENGINE_POOL_SIZE: "48"
-  ENGINE_THREADS: "4"
-  ENGINE_HASH: "1024"
+  ENGINE_POOL_SIZE: "128"
+  ENGINE_THREADS: "1"
+  ENGINE_HASH: "256"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -141,11 +141,11 @@ spec:
                 name: wintrchess-config
           resources:
             requests:
-              cpu: "192"
+              cpu: "136"
               memory: 64Gi
             limits:
-              cpu: "220"
-              memory: 80Gi
+              cpu: "160"
+              memory: 64Gi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
